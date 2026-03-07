@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900 p-6">
       <div className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-3xl font-semibold">Honky Tonk Los Angeles</h1>
+        <h1 className="mb-6 text-3xl font-semibold">Honky Tonk Los Angeles!</h1>
 
         <div className="rounded-2xl bg-white p-4 shadow">
           <FullCalendar

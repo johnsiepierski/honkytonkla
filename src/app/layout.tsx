@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Honky Tonk LA",
   description: "Two-stepping social dance events in the Los Angeles area",
+  icons: {
+    icon: "/src/boots.png",
+  },
 };
 
 export default function RootLayout({

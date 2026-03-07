@@ -25,9 +25,6 @@ export default function Home() {
               {
                 googleCalendarId: '21ad802c5543ccf34c04d088677c75c1828498534b5a6c23966b22bae955dac9@group.calendar.google.com',
               },
-              {
-                googleCalendarId: 'calendar2@group.calendar.google.com',
-              },
             ]}
             height="auto"
           />

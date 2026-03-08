@@ -5,7 +5,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import googleCalendarPlugin from '@fullcalendar/google-calendar'
-import type { EventClickArg, HeaderToolbarInput } from '@fullcalendar/core'
+import type { EventClickArg, ToolbarInput } from '@fullcalendar/core'
 import { useRouter } from 'next/navigation'
 
 const CALENDAR_ID =
@@ -42,17 +42,18 @@ export default function Home() {
     router.push(href)
   }
 
-  const headerToolbar: HeaderToolbarInput = mounted && isMobile
-    ? {
-        left: 'prev,next',
-        center: 'title',
-        right: 'today',
-      }
-    : {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
-      }
+  const headerToolbar: ToolbarInput =
+    mounted && isMobile
+      ? {
+          left: 'prev,next',
+          center: 'title',
+          right: 'today',
+        }
+      : {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        }
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900 px-3 py-4 sm:p-6">

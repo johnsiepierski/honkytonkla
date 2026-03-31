@@ -15,42 +15,48 @@ type GoogleCalendarEvent = {
   start?: {
     date?: string
     dateTime?: string
-    timeZone?: string
-  }
-  end?: {
-    date?: string
-    dateTime?: string
-    timeZone?: string
   }
 }
 
 const FALLBACK_CALENDAR_ID =
   '21ad802c5543ccf34c04d088677c75c1828498534b5a6c23966b22bae955dac9@group.calendar.google.com'
 
-function formatEventDateTime(
-  value?: { date?: string; dateTime?: string; timeZone?: string },
-) {
+const LA_TIMEZONE = 'America/Los_Angeles'
+
+function formatEventStart(value?: { date?: string; dateTime?: string }) {
   if (!value) return 'TBD'
 
   if (value.dateTime) {
     const date = new Date(value.dateTime)
-    return new Intl.DateTimeFormat('en-US', {
+
+    const weekday = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
+      timeZone: LA_TIMEZONE,
+    }).format(date)
+
+    const monthDay = new Intl.DateTimeFormat('en-US', {
       month: 'long',
       day: 'numeric',
-      year: 'numeric',
+      timeZone: LA_TIMEZONE,
+    }).format(date)
+
+    const time = new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
       minute: '2-digit',
+      timeZone: LA_TIMEZONE,
     }).format(date)
+
+    return `${weekday}, ${monthDay} • ${time}`
   }
 
   if (value.date) {
     const date = new Date(`${value.date}T00:00:00`)
+
     return new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
-      year: 'numeric',
+      timeZone: LA_TIMEZONE,
     }).format(date)
   }
 
@@ -98,89 +104,78 @@ export default async function EventPage({
   const event = (await response.json()) as GoogleCalendarEvent
 
   const title = event.summary || 'Untitled event'
-  const start = formatEventDateTime(event.start)
-  const end = formatEventDateTime(event.end)
+  const start = formatEventStart(event.start)
   const location = event.location?.trim()
   const description = event.description?.trim()
   const mapsUrl = location ? buildMapsUrl(location) : null
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10 text-neutral-900">
+    <main className="min-h-screen bg-[#f8f4ea] px-4 py-8 text-[#2f2418] sm:px-6 sm:py-10">
       <div className="mx-auto max-w-3xl">
         <Link
           href="/"
-          className="mb-6 inline-block text-sm text-neutral-600 hover:text-neutral-900"
+          className="inline-block text-sm font-medium text-[#7a5230] hover:text-[#5f3d21]"
         >
           ← Back to calendar
         </Link>
 
-        <article className="rounded-2xl bg-white p-6 shadow">
-          <h1 className="text-3xl font-semibold">{title}</h1>
+        <article className="mt-6 border border-[#d8c8ae] bg-[#fffaf0]">
+          <div className="border-b border-[#d8c8ae] px-5 py-5 sm:px-8 sm:py-7">
+            <h1 className="text-3xl font-semibold tracking-tight text-[#2f2418] sm:text-4xl">
+              {title}
+            </h1>
+            <p className="mt-3 text-lg text-[#5f3d21]">{start}</p>
+          </div>
 
-          <div className="mt-6 space-y-4">
-            <section>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-                Starts
-              </h2>
-              <p className="mt-1 text-base">{start}</p>
-            </section>
-
-            <section>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-                Ends
-              </h2>
-              <p className="mt-1 text-base">{end}</p>
-            </section>
-
+          <div className="px-5 py-6 sm:px-8">
             {location && (
-              <section>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+              <section className="border-b border-[#d8c8ae] pb-6">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-[#7a6a55]">
                   Location
                 </h2>
-                <p className="mt-1 text-base">{location}</p>
-                {mapsUrl && (
-                  <a
-                    href={mapsUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-block text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    Open in Google Maps
-                  </a>
-                )}
+                <p className="mt-2 text-base text-[#2f2418]">{location}</p>
+
+                <a
+                  href={mapsUrl!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block text-sm font-medium text-[#b84f3a] hover:text-[#8f3d2d]"
+                >
+                  Open in Google Maps
+                </a>
               </section>
             )}
 
             {description && (
-              <section>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+              <section className={location ? 'pt-6' : ''}>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-[#7a6a55]">
                   Details
                 </h2>
-                <div className="mt-1 whitespace-pre-wrap text-base leading-7 text-neutral-800">
+                <div className="mt-2 whitespace-pre-wrap text-base leading-7 text-[#2f2418]">
                   {description}
                 </div>
               </section>
             )}
-          </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            {event.htmlLink && (
-              <a
-                href={event.htmlLink}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+            <div className="mt-8 flex flex-wrap gap-3">
+              {event.htmlLink && (
+                <a
+                  href={event.htmlLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block border border-[#7a5230] bg-[#7a5230] px-4 py-2 text-sm font-medium text-white hover:bg-[#5f3d21] hover:border-[#5f3d21]"
+                >
+                  Open in Google Calendar
+                </a>
+              )}
+
+              <Link
+                href="/"
+                className="inline-block border border-[#d8c8ae] bg-white px-4 py-2 text-sm font-medium text-[#5f3d21] hover:bg-[#f2eadb]"
               >
-                Open in Google Calendar
-              </a>
-            )}
-
-            <Link
-              href="/"
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
-            >
-              Back to calendar
-            </Link>
+                Back to calendar
+              </Link>
+            </div>
           </div>
         </article>
       </div>

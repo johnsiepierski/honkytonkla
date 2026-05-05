@@ -48,6 +48,13 @@ h1 {
   text-transform: uppercase;
 }
 
+.page-title {
+  font-family: var(--font-rope), sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* Calendar */
 
 .fc {

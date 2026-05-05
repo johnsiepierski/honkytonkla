@@ -23,6 +23,30 @@ const FALLBACK_CALENDAR_ID =
 
 const LA_TIMEZONE = 'America/Los_Angeles'
 
+function sanitizeDescriptionHtml(value: string) {
+  return value
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+    .replace(/\son\w+=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\sstyle=(?:"[^"]*"|'[^']*')/gi, '')
+    .replace(
+      /\s(href|src)=(["'])(.*?)\2/gi,
+      (_match, attr: string, quote: string, url: string) => {
+        const safeUrl = url.trim()
+
+        if (
+          safeUrl.startsWith('http://') ||
+          safeUrl.startsWith('https://') ||
+          safeUrl.startsWith('mailto:')
+        ) {
+          return ` ${attr}=${quote}${safeUrl}${quote}`
+        }
+
+        return ''
+      },
+    )
+}
+
 function formatEventStart(value?: { date?: string; dateTime?: string }) {
   if (!value) return 'TBD'
 
@@ -107,6 +131,7 @@ export default async function EventPage({
   const start = formatEventStart(event.start)
   const location = event.location?.trim()
   const description = event.description?.trim()
+  const descriptionHtml = description ? sanitizeDescriptionHtml(description) : ''
   const mapsUrl = location ? buildMapsUrl(location) : null
 
   return (
@@ -151,8 +176,20 @@ export default async function EventPage({
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-[#7a6a55]">
                   Details
                 </h2>
-                <div className="mt-2 whitespace-pre-wrap text-base leading-7 text-[#2f2418]">
-                  {description}
+                <div
+                  className="mt-2 whitespace-pre-wrap text-base leading-7 text-[#2f2418] [&_a]:font-medium [&_a]:text-[#b84f3a] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#8f3d2d]"
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                />
+              </section>
+            )}
+
+            {!description && (
+              <section className={location ? 'pt-6' : ''}>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-[#7a6a55]">
+                  Details
+                </h2>
+                <div className="mt-2 text-base leading-7 text-[#7a6a55]">
+                  No description provided.
                 </div>
               </section>
             )}

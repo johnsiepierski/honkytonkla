@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import { rope } from './fonts'
+import './globals.css'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -8,30 +9,30 @@ const geistSans = Geist({
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Honky Tonk LA",
-  description: "Two-stepping social dance events in the Los Angeles area",
+  title: 'Honky Tonk LA',
+  description: 'Two-stepping social dance events in the Los Angeles area',
   icons: {
-    icon: "/boots.png",
+    icon: '/boots.png',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${rope.variable} antialiased`}
       >
         {children}
       </body>
     </html>
-  );
+  )
 }
